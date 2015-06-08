@@ -31,14 +31,24 @@ int main(void)
 
   /* TIM Configuration */
   LED_Config();
-  TIM_Config();
+  //GPIO_Config();
+  GPIO_SetBits(GPIOB,GPIO_Pin_4);
   UART_Config(9600); // setup usart 1 with a baudrate of 9600
-  pwm_initconfig();
+
 
   UART_write(USART1, " <<<<<<<<<<<<<<<<<<< STM32 USART >>>>>>>>>>>>>>>>>>>>\n \r ");
   UART_write(USART1, "             USART17 connection initialised \n \r ");
 
+
+
+
 while (1){
+
+	if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0))
+
+	{
+	CODEUR_Read ();
+	}
 
 }
 

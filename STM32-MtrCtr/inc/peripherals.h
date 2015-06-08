@@ -21,6 +21,9 @@
 /* Private function prototypes -----------------------------------------------*/
 
 void TIM_Config(void);
+void TIM1_Config(void);
+void ENCR_Config(void);
+void GPIO_Config(void);
 void I2C_Config(void);
 void LED_Config(void);
 void UART_Config(int baudrate);

@@ -42,7 +42,9 @@
 									<listOptionValue builtIn="false" value="STM32F40_41xxx"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2074643574" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.1635560358" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.1635560358"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.2042782272" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.1969409001" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1564088319" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.1317876974" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false"/>
@@ -121,7 +123,9 @@
 									<listOptionValue builtIn="false" value="STM32F40_41xxx"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.142506309" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.1497638032" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.1497638032"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.541252627" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.762088342" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.534757076" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level.1889651286" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.cpp.optimization.level.most" valueType="enumerated"/>
@@ -163,6 +167,8 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="STM32-MtrCtr.fr.ac6.managedbuild.target.gnu.cross.exe.2051984165" name="Executable" projectType="fr.ac6.managedbuild.target.gnu.cross.exe"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="fr.ac6.managedbuild.config.gnu.cross.exe.release.763744561;fr.ac6.managedbuild.config.gnu.cross.exe.release.763744561.;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.709115899;cdt.managedbuild.tool.gnu.c.compiler.input.142506309">
@@ -171,7 +177,8 @@
 		<scannerConfigBuildInfo instanceId="fr.ac6.managedbuild.config.gnu.cross.exe.debug.1311461263;fr.ac6.managedbuild.config.gnu.cross.exe.debug.1311461263.;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.888125190;cdt.managedbuild.tool.gnu.c.compiler.input.2074643574">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="fr.ac6.managedbuild.config.gnu.cross.exe.debug.1311461263;fr.ac6.managedbuild.config.gnu.cross.exe.debug.1311461263.;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1301581011;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1757602099">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

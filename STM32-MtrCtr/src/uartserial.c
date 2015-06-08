@@ -6,6 +6,32 @@
   ******************************************************************************
   */
 #include "main.h"
+//#include "pwm_ctr.h"
+
+#define BUFFER_SIZE 32
+
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+
+
+//notice the use of the volatile keyword this is important as without it the compiler may make
+//optimisations assuming the value of this variable hasnt changed
+volatile char received_buffer[BUFFER_SIZE+1];
+volatile char received_buffer2[BUFFER_SIZE+1];
+volatile char Lastreceived_buffer[BUFFER_SIZE+1];
+
+static uint8_t DataReceivedCounter = 0; //tracks the number of characters received so far, reset after each command
+static uint8_t DataReceivedCounter2 = 0; //tracks the number of characters received so far, reset after each command
+static uint8_t secondcharflag = 0;
+int val = 0;
+
+
+/* Private function prototypes -----------------------------------------------*/
+
+void USARTCommandReceived(char * command);
+void ClearCommand();
+void Delay(int nCount);
+
 
 
 //writes out a string to the passed in usart. The string is passed as a pointer
@@ -35,10 +61,12 @@ void USART1_IRQHandler(void){
 		USART_SendData(USART1, t);
 
 		/* Was it the end of the line? */
+
 					if( t == '\n' || t == '\r' )
 					{
 						/* Just to space the output from the input. */
 						UART_write(USART1,  "\r\n" );
+						secondcharflag = 0;
 
 						/* See if the command is empty, indicating that the last command
 						is to be executed again. */
@@ -67,43 +95,100 @@ void USART1_IRQHandler(void){
 						to be processed again. */
 						strcpy( Lastreceived_buffer, received_buffer );
 						DataReceivedCounter = 0;
+						DataReceivedCounter2 =0;
 						memset( received_buffer, 0x00, BUFFER_SIZE );
+						memset( received_buffer2, 0x00, BUFFER_SIZE );
+						t = 0;
 
 						UART_write(USART1,  "\r\n[Press ENTER to execute the previous command again]\r\n>" );;
+					}
+
+					else if( ( t == ' ') )
+					{
+						secondcharflag = 1;
 					}
 					else
 					{
 
-						if( t == '\r' )
-						{
-							/* Ignore the character. */
-						}
+						if (secondcharflag == 0)
 
-						else if( ( t == '\b' ) || ( t == 0x7F ) )
 						{
-							/* Backspace was pressed.  Erase the last character in the
-							string - if any. */
-							if( DataReceivedCounter > 0 )
+
+							if( t == '\r' )
 							{
-								DataReceivedCounter--;
-								received_buffer[ DataReceivedCounter ] = '\0';
+								/* Ignore the character. */
 							}
-						}
-						else
-						{
-							/* A character was entered.  Add it to the string entered so
-							far.  When a \n is entered the complete	string will be
-							passed to the command interpreter. */
-							if( ( t >= ' ' ) && ( t <= '~' ) )
+
+							else if( ( t == '\b' ) || ( t == 0x7F ) )
 							{
-								if( DataReceivedCounter < 32 )
+								/* Backspace was pressed.  Erase the last character in the
+								string - if any. */
+								if( DataReceivedCounter > 0 )
 								{
-									received_buffer[ DataReceivedCounter ] = t ;
-									DataReceivedCounter++;
+									DataReceivedCounter--;
+									received_buffer[ DataReceivedCounter ] = '\0';
 								}
 							}
+							else
+							{
+								/* A character was entered.  Add it to the string entered so
+								far.  When a \n is entered the complete	string will be
+								passed to the command interpreter. */
+								if( ( t >= ' ' ) && ( t <= '~' ) )
+								{
+									if( DataReceivedCounter < 32 )
+									{
+										received_buffer[ DataReceivedCounter ] = t ;
+										DataReceivedCounter++;
+									}
+								}
+							}
+
 						}
-					}
+
+						else
+						{
+
+							if( t == '\r' )
+							{
+								/* Ignore the character. */
+							}
+
+							else if( ( t == '\b' ) || ( t == 0x7F ) )
+							{
+								/* Backspace was pressed.  Erase the last character in the
+								string - if any. */
+								if( DataReceivedCounter2 > 0 )
+								{
+									DataReceivedCounter2--;
+									received_buffer2[ DataReceivedCounter2 ] = '\0';
+								}
+							}
+							else
+							{
+								/* A character was entered.  Add it to the string entered so
+								far.  When a \n is entered the complete	string will be
+								passed to the command interpreter. */
+								if( ( t >= ' ' ) && ( t <= '~' ) )
+								{
+									if( DataReceivedCounter2 < 32 )
+									{
+										received_buffer2[ DataReceivedCounter2 ] = t ;
+										DataReceivedCounter2++;
+									}
+								}
+							}
+
+						}
+
+						}
+
+
+
+
+
+
+
 
 /*
 		if( (DataReceivedCounter < BUFFER_SIZE) && t != 32 ){
@@ -128,25 +213,31 @@ void USART1_IRQHandler(void){
 void USARTCommandReceived(char * command){
 	UART_write(USART1, received_buffer);
 
-	if        (compare(command, "L5ON") == 0){
+	if        (compare(command, "l5-on") == 0){
 		STM_EVAL_LEDOn(LED5);
-	}else 	if(compare(command, "L5OFF") == 0){
+	}else 	if(compare(command, "l5-off") == 0){
 		STM_EVAL_LEDOff(LED5);
 
-	}else 	if(compare(command, "L6ON") == 0){
+	}else 	if(compare(command, "l6-on") == 0){
 		STM_EVAL_LEDOn(LED6);
-	}else 	if(compare(command, "L6OFF") == 0){
+	}else 	if(compare(command, "l6-off") == 0){
 		STM_EVAL_LEDOff(LED6);
 
-	}else 	if(compare(command, "L3ON") == 0){
+	}else 	if(compare(command, "l3-on") == 0){
 		STM_EVAL_LEDOn(LED3);
-	}else 	if(compare(command, "L3OFF") == 0){
+	}else 	if(compare(command, "l3-off") == 0){
 		STM_EVAL_LEDOff(LED3);
 
-	}else 	if(compare(command, "L4ON") == 0){
+	}else 	if(compare(command, "l4-on") == 0){
 		STM_EVAL_LEDOn(LED4);
-	}else 	if(compare(command, "L4OFF") == 0){
+	}else 	if(compare(command, "l4-off") == 0){
 		STM_EVAL_LEDOff(LED4);
+	}else 	if(compare(command, "m-on") == 0){
+		val = atoi(received_buffer2);
+		pwm_initconfig(val);
+		val = 0;
+	}else 	if(compare(command, "m-off") == 0){
+		pwm_deinitconfig();
 	}
 
 }

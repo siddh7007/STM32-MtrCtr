@@ -16,14 +16,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-uint16_t CCR1_Val = 1;
-uint16_t CCR2_Val = 233;
-uint16_t CCR3_Val = 116;
-uint16_t CCR4_Val = 58;
-uint16_t PrescalerValue = 0;
 
 int buff = 55 ;
 int dataRX;
@@ -33,8 +26,11 @@ int dataAdd = 0;
 int i = 0 ;
 
 
-int pwm_initconfig(void);
+int pwm_initconfig(int);
+int pwm_deinitconfig(void);
 int setpwm_freq_dutycycle(int,int);
+void CODEUR_Reset(void);
+void CODEUR_Read(void);
 
 
 #endif /* PWM_CTR_H_ */

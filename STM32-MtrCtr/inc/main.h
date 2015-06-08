@@ -31,26 +31,7 @@ USART_InitTypeDef USART_InitStructure;
 
 /* Private define ------------------------------------------------------------*/
 
-#define BUFFER_SIZE 32
 
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-
-//notice the use of the volatile keyword this is important as without it the compiler may make
-//optimisations assuming the value of this variable hasnt changed
-volatile char received_buffer[BUFFER_SIZE+1];
-volatile char Lastreceived_buffer[BUFFER_SIZE+1];
-
-static uint8_t DataReceivedCounter = 0; //tracks the number of characters received so far, reset after each command
-
-
-
-/* Private function prototypes -----------------------------------------------*/
-
-void USARTCommandReceived(char * command);
-void ClearCommand();
-void Delay(int nCount);
 void UART_Config(int baudrate);
 
 

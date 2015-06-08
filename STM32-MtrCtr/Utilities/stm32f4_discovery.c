@@ -234,17 +234,6 @@ uint32_t STM_EVAL_PBGetState(Button_TypeDef Button)
   return GPIO_ReadInputDataBit(BUTTON_PORT[Button], BUTTON_PIN[Button]);
 }
 
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */   
 
 /**
   * @}
