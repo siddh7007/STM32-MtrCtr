@@ -17,7 +17,7 @@
 //notice the use of the volatile keyword this is important as without it the compiler may make
 //optimisations assuming the value of this variable hasnt changed
 volatile char received_buffer[BUFFER_SIZE+1];
-volatile char received_buffer2[BUFFER_SIZE+1];
+volatile char received_buffer2[10] = {0,0,0,0,0,0,0,0,0,0};
 volatile char Lastreceived_buffer[BUFFER_SIZE+1];
 
 static uint8_t DataReceivedCounter = 0; //tracks the number of characters received so far, reset after each command
@@ -238,6 +238,10 @@ void USARTCommandReceived(char * command){
 		val = 0;
 	}else 	if(compare(command, "m-off") == 0){
 		pwm_deinitconfig();
+	}else 	if(compare(command, "m-step") == 0){
+		val = atoi(received_buffer2);
+		motor_steps(val);
+		val = 0;
 	}
 
 }

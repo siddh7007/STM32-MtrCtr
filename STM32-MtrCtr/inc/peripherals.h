@@ -20,8 +20,9 @@
 
 /* Private function prototypes -----------------------------------------------*/
 
-void TIM_Config(void);
+void PWM_TIM3_Config(void);
 void TIM1_Config(void);
+void Stepper_Drive_Control_GPIO_Config(void);
 void ENCR_Config(void);
 void GPIO_Config(void);
 void I2C_Config(void);

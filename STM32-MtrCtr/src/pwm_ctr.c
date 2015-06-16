@@ -4,23 +4,31 @@
 //GLOBAL
 volatile int16_t Codeur_count;
 volatile int32_t Codeur_total;
+int8_t RotationDirection_CW = 1 ;
+int8_t RotationDirection_CCW = 0 ;
+int32_t count = 0;
 
 //LOCAL
 static volatile int16_t Codeur_old;
 static volatile int16_t Codeur_actual;
 char buffer[33];
 
+void motor_steps(int32_t steps)
+{
+
+	pwm_initconfig(1000);
+	count = Encoder_Read();
+	while( abs(count) <= steps )
+	{
+		count = Encoder_Read();
+	}
+	pwm_deinitconfig();
+
+}
 
 int pwm_initconfig(int OutFreq)
 
 {
-	GPIO_ResetBits(GPIOB,GPIO_Pin_4);
-	TIM_Config();
-
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef  TIM_OCInitStructure;
-
-	uint16_t PrescalerValue = 0;
 	  /* -----------------------------------------------------------------------
 	    TIM3 Configuration: generate 4 PWM signals with 4 different duty cycles.
 
@@ -52,78 +60,113 @@ int pwm_initconfig(int OutFreq)
 	     based on this variable will be incorrect.
 	  ----------------------------------------------------------------------- */
 
-	  /* Compute the prescaler value */
+	Stepper_Control(ENABLE);
+	PWM_TIM3_Config();
 
-	  int TimFreq, Period ;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-	  TimFreq = 14000000 ;
-	  //OutFreq = 5000 ;
-	  Period  = 14000000/OutFreq ;
+	uint16_t PrescalerValue = 0;
 
-	  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / TimFreq) - 1;
+	// Compute the Pre-scaler value
 
-	  //PrescalerValue = (uint16_t) 0;
-	  /* Time base configuration */
-	  TIM_TimeBaseStructure.TIM_Period = Period - 1;
-	  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
-	  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-	  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_CenterAligned3;
+	int TimFreq, Period ;
 
-	  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TimFreq = 14000000 ;
+	//OutFreq = 5000 ;
+	Period  = 14000000/OutFreq ;
 
-	  /* PWM1 Mode configuration: Channel1 */
-	  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-	  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	  TIM_OCInitStructure.TIM_Pulse = Period / 2;
-	  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	PrescalerValue = (uint16_t) ((SystemCoreClock /2) / TimFreq) - 1;
 
-	  TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	//PrescalerValue = (uint16_t) 0;
+	//Time base configuration
+	TIM_TimeBaseStructure.TIM_Period = Period - 1;
+	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_CenterAligned3;
 
-	  TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 
+	// PWM1 Mode configuration: Channel1
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_Pulse = Period / 2;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-	  TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
 
-	   /* TIM IT enable */
-	  //    TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-
-	  ENCR_Config() ;
-
-
-	  /* TIM3 enable counter */
-	  TIM_Cmd(TIM3, ENABLE);
-
- return 0 ;
-}
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
 
-int pwm_deinitconfig(void)
+	TIM_ARRPreloadConfig(TIM3, ENABLE);
 
-{
+	// TIM IT enable
+	// TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 
-	TIM_Cmd(TIM3, DISABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, DISABLE);
-	GPIO_SetBits(GPIOB,GPIO_Pin_4);
+	// TIM3 enable counter
+	TIM_Cmd(TIM3, ENABLE);
+
 	return 0 ;
 }
 
+//Disable and reset TIM3 - PWM output
+int pwm_deinitconfig(void)
 
-void CODEUR_Read (void)
+{
+	Stepper_Control(DISABLE);
+	TIM_Cmd(TIM3, DISABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
+//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, DISABLE);
+	return 0 ;
+}
+
+//Stepper-Motor drive control ENABLE / DISABLE
+void Stepper_Control(int Control)
+
+{
+	if (Control) GPIO_ResetBits(GPIOD,GPIO_Pin_3);
+	else GPIO_SetBits(GPIOD,GPIO_Pin_3);
+}
+
+
+//Set Stepper-Motor direction CW = ClockWise / CCW = CounterClockWise
+void Stepper_Direction(int Rotation)
+
+{
+	if (Rotation == RotationDirection_CW ) GPIO_SetBits(GPIOD,GPIO_Pin_3);
+	else GPIO_ResetBits(GPIOD,GPIO_Pin_3);
+}
+
+//Encoder Read
+int32_t Encoder_Read(void)
 {
     Codeur_old = Codeur_actual;
     Codeur_actual = TIM_GetCounter (TIM2) ;
     Codeur_count = Codeur_actual - Codeur_old;
     Codeur_total += Codeur_count;
     itoa (Codeur_total,buffer,10);
-    UART_write(USART1, buffer) ;
-    UART_write(USART1, "\n \r ");
+    UART_write(USART1, buffer);
+    UART_write(USART1, "\r ");
+    return Codeur_total;
 }
 
-
-setpwm_freq_dutycycle(int freq,int dutycycle)
+//Encoder counter reset
+void Encoder_Reset(void)
 
 {
 
+    __disable_irq();
+    Codeur_old = 0;
+    Codeur_total = 0;
+    TIM_SetCounter (TIM2, 0);
+    Encoder_Read();
+    __enable_irq();
 
+}
+
+int setpwm_freq_dutycycle(int freq,int dutycycle)
+
+{
+
+	return 0 ;
 }

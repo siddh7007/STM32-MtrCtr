@@ -18,41 +18,37 @@
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
   */
+
 #include "main.h"
 
-int main(void)
-{
-  /*!< At this stage the microcontroller clock setting is already configured,
+
+  /*   At this stage the microcontroller clock setting is already configured,
        this is done through SystemInit() function which is called from startup
        file (startup_stm32f4xx.s) before to branch to application main.
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file
-     */
+  */
 
-  /* TIM Configuration */
+int main(void)
+
+{
+
   LED_Config();
-  //GPIO_Config();
-  GPIO_SetBits(GPIOB,GPIO_Pin_4);
-  UART_Config(9600); // setup usart 1 with a baudrate of 9600
-
+  Stepper_Drive_Control_GPIO_Config();
+  Stepper_Control(DISABLE);          // Stepper-Drive Disable initially
+  UART_Config(9600);                 // Setup USART1 with a baudrate of 9600
+  ENCR_Config();
 
   UART_write(USART1, " <<<<<<<<<<<<<<<<<<< STM32 USART >>>>>>>>>>>>>>>>>>>>\n \r ");
-  UART_write(USART1, "             USART17 connection initialised \n \r ");
+  UART_write(USART1, "             USART17 connection initialized \n \r ");
 
-
-
-
-while (1){
+  while (1){
 
 	if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0))
-
-	{
-	CODEUR_Read ();
-	}
-
-}
-
-
+		{
+			Encoder_Read();
+		}
+  	  }
 }
 
 
@@ -76,12 +72,5 @@ void assert_failed(uint8_t* file, uint32_t line)
 }
 #endif
 
-/**
-  * @}
-  */
 
-/**
-  * @}
-  */
-
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/* ====================================== END OF FILE =============================================== */

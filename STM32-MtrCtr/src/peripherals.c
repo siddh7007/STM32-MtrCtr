@@ -20,19 +20,20 @@ LED_Config(void)
 
 /*================ TIM3 Configuration ============================================  */
 
-void TIM_Config(void)
+void PWM_TIM3_Config(void)
 
 {
+	//Structures used configure the hardware
 	GPIO_InitTypeDef GPIO_InitStruct;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* TIM3 clock enable */
+	//TIM3 clock enable
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-	/* GPIOC and GPIOB clock enable */
+	//GPIOC and GPIOB clock enable
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOA, ENABLE);
 
-	/* GPIOC Configuration: TIM3 CH1 (PC6) and TIM3 CH2 (PC7) */
+	//GPIOC Configuration: TIM3 CH1 (PC6) and TIM3 CH2 (PC7)
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
@@ -40,25 +41,16 @@ void TIM_Config(void)
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_DOWN ;
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	  /* Configure the GPIOB pin 4*/
-	  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
-	  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
-	  GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-	  GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-	  GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-	/* Connect TIM3 pins to AF2 */
+	//Connect TIM3 pins to AF2
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM3);
 
-	/* Enable the TIM3 gloabal Interrupt */
-	 NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	 NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	 NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	 NVIC_Init(&NVIC_InitStructure);
-
+	//Enable the TIM3 Global Interrupt
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 
 }
 
@@ -72,7 +64,7 @@ void UART_Config(int baudrate)
 	USART_InitTypeDef USART_InitStruct;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	//enable the clocks for the GPIOB and the USART
+	//Enable the clocks for the GPIOB and the USART
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 
@@ -88,7 +80,7 @@ void UART_Config(int baudrate)
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_USART1); //
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_USART1);
 
-	//configure USART
+	//Configure USART
 	USART_InitStruct.USART_BaudRate = baudrate;
 	USART_InitStruct.USART_WordLength = USART_WordLength_8b;
 	USART_InitStruct.USART_StopBits = USART_StopBits_1;
@@ -106,24 +98,52 @@ void UART_Config(int baudrate)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	// finally this enables the complete USART1 peripheral
+	// Finally this enables the complete USART1 peripheral
 	USART_Cmd(USART1, ENABLE);
 }
 
+/*======== Stepper-Motor Drive related GPIO Configuration ============================  */
+
+void Stepper_Drive_Control_GPIO_Config(void)
+
+{
+	//Enable the clocks for the GPIOB, GPIOA and the TIM2
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+
+	//Structures used configure the hardware
+	GPIO_InitTypeDef GPIO_InitStruct;
+
+    //Configure the GPIOD pin 3
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    //Configure the GPIOD pin 4
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOD, &GPIO_InitStruct);
+}
 /*================ Encoder TIM Configuration =========================================  */
 
 void ENCR_Config(void)
 
 {
 
-
+	//Enable the clocks for the GPIOB, GPIOA and the TIM2
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOA, ENABLE);
     RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM2, ENABLE);
 
+	//Structures used configure the hardware
 	GPIO_InitTypeDef GPIO_InitStruct;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-
+	//Initialize pins GPIOA 15
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_15;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
@@ -131,6 +151,7 @@ void ENCR_Config(void)
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+	//Initialize pins GPIOB 3
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
@@ -141,14 +162,10 @@ void ENCR_Config(void)
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_TIM2);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_TIM2);
 
+	//Configure TIM2
+	TIM_EncoderInterfaceConfig (TIM2, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+	TIM_SetAutoreload (TIM2, 0xffff);
 
-
-	  // set both inputs to rising polarity to let it use both edges
-	  TIM_EncoderInterfaceConfig (TIM2, TIM_EncoderMode_TI12,
-	                              TIM_ICPolarity_Rising,
-	                              TIM_ICPolarity_Rising);
-
-	  TIM_SetAutoreload (TIM2, 0xffff);
-
-	  TIM_Cmd (TIM2, ENABLE);
+	//Enable Encoder
+	TIM_Cmd (TIM2, ENABLE);
 }
